@@ -1,0 +1,38 @@
+name: customer-support-triage
+version: "1.0.0"
+description: >
+  Real-world RL environment where an AI agent triages customer support tickets.
+
+tasks:
+  - id: easy
+    correct_priority: high
+    correct_department: billing
+  - id: medium
+    correct_priority: high
+    correct_department: technical
+  - id: hard
+    correct_priority: critical
+    correct_department: technical
+
+action_space:
+  priority:
+    type: categorical
+    values: [low, medium, high, critical]
+  department:
+    type: categorical
+    values: [billing, technical, general]
+  response_draft:
+    type: text
+
+reward:
+  range: [0.0, 1.0]
+  components:
+    priority_correct: 0.40
+    department_correct: 0.30
+    response_quality: 0.30
+
+endpoints:
+  reset:  { method: POST, path: /reset }
+  step:   { method: POST, path: /step }
+  state:  { method: GET,  path: /state }
+  health: { method: GET,  path: /health }
