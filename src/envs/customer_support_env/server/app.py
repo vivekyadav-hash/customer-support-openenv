@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 import sys, os
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../../../"))
@@ -16,10 +16,8 @@ app = FastAPI(
 
 env = CustomerSupportEnvironment()
 
-
 class ResetRequest(BaseModel):
-    task_level: str = "easy"
-
+    task_level: Optional[str] = "easy"
 
 class StepRequest(BaseModel):
     priority: str
@@ -27,16 +25,17 @@ class StepRequest(BaseModel):
     response_draft: str
     metadata: Dict[str, Any] = {}
 
-
 @app.get("/health")
 def health():
     return {"status": "ok"}
 
-
 @app.post("/reset")
-def reset(req: ResetRequest):
+def reset(req: Optional[ResetRequest] = None):
+    task_level = "easy"
+    if req and req.task_level:
+        task_level = req.task_level
     try:
-        obs = env.reset(task_level=req.task_level)
+        obs = env.reset(task_level=task_level)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     return {
@@ -48,7 +47,6 @@ def reset(req: ResetRequest):
         "feedback":    obs.feedback,
         "metadata":    obs.metadata,
     }
-
 
 @app.post("/step")
 def step(req: StepRequest):
@@ -71,7 +69,6 @@ def step(req: StepRequest):
         "feedback":    obs.feedback,
         "metadata":    obs.metadata,
     }
-
 
 @app.get("/state")
 def state():
