@@ -159,9 +159,6 @@ def parse_llm_response(text: str) -> dict:
 #  MAIN — runs all 3 tasks
 # ─────────────────────────────────────────
 def main() -> None:
-    if not API_KEY:
-        print("[ERROR] No API key found. Set HF_TOKEN or API_KEY environment variable.", flush=True)
-        sys.exit(1)
 
     client = OpenAI(base_url=API_BASE_URL, api_key=API_KEY)
 
