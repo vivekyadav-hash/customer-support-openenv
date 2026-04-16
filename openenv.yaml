@@ -1,8 +1,8 @@
 name: customer-support-triage
 version: "1.0.0"
-
 description: >
   Real-world RL environment where an AI agent triages customer support tickets.
+
 tasks:
   - id: easy
     correct_priority: high
